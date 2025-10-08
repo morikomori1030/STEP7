@@ -4,13 +4,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    return redirect()->route('products.index');
+})->middleware(['auth']);
 
-Auth::routes();
+require __DIR__ . '/auth.php';
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::middleware(['auth'])->group(function () {
 
-Route::middleware('auth')->group(function () {
     Route::resource('products', ProductController::class);
+
+    Route::get('/dashboard', function () {
+        return redirect()->route('products.index');
+    })->name('dashboard');
 });

@@ -1,10 +1,20 @@
-@extends('layouts.app')
-
-@section('content')
-<div class="container">
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>商品 新規登録</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>body{font-family:system-ui;margin:2rem} .btn{padding:.5rem 1rem;border:1px solid #ccc}</style>
+</head>
+<body>
   <h1>商品 新規登録</h1>
-  <form action="{{ route('products.store') }}" method="POST">
+
+  <form action="{{ route('products.store') }}" method="post" style="display:grid;gap:.8rem;max-width:640px">
     @include('products._form')
+    <div style="display:flex;gap:.5rem">
+      <button class="btn" type="submit">保存</button>
+      <a class="btn" href="{{ route('products.index') }}">戻る</a>
+    </div>
   </form>
-</div>
-@endsection
+</body>
+</html>

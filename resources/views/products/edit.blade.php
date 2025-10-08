@@ -1,27 +1,21 @@
-@extends('layouts.app')
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>商品 編集</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>body{font-family:system-ui;margin:2rem} .btn{padding:.5rem 1rem;border:1px solid #ccc}</style>
+</head>
+<body>
+  <h1>商品 編集</h1>
 
-@section('content')
-<div class="container">
-  <h1 class="h4 mb-3">商品編集</h1>
-
-  @if ($errors->any())
-    <div class="alert alert-danger">
-      <ul class="mb-0">
-        @foreach ($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
-
-  <form action="{{ route('products.update', $product) }}" method="post">
-    @csrf
+  <form action="{{ route('products.update', $product) }}" method="post" style="display:grid;gap:.8rem;max-width:640px">
     @method('PUT')
-
-    {{-- 共通フォーム部分 --}}
-    @include('products._form', ['product' => $product])
-
-    <button type="submit" class="btn btn-primary">更新する</button>
+    @include('products._form')
+    <div style="display:flex;gap:.5rem">
+      <button class="btn" type="submit">更新</button>
+      <a class="btn" href="{{ route('products.index') }}">戻る</a>
+    </div>
   </form>
-</div>
-@endsection
+</body>
+</html>

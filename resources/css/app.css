@@ -3,26 +3,18 @@
 @tailwind utilities;
 
 @layer components {
-
-  .btn-primary {
+  .btn {
     @apply inline-flex items-center justify-center
-           w-40 h-12 rounded-xl
-           bg-gray-900 text-white font-semibold
-           shadow hover:bg-gray-800
-           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900;
+           w-16 h-9 rounded-md text-sm font-medium
+           transition-colors duration-200 focus:outline-none
+           focus:ring-2 focus:ring-offset-2;
   }
 
-  .btn-secondary {
-    @apply inline-flex items-center justify-center
-           w-40 h-12 rounded-xl
-           bg-gray-100 text-gray-700 font-semibold
-           border border-gray-200
-           hover:bg-gray-50
-           focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400;
+  .btn-detail {
+    @apply bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-400;
   }
 
-  .form-input {
-  @apply block w-[500px] max-w-full rounded-xl border border-gray-300
-         focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400;
-}
+  .btn-delete {
+    @apply bg-red-500 text-white hover:bg-red-600 focus:ring-red-400;
+  }
 }

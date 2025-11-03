@@ -1,89 +1,131 @@
-<!doctype html>
-<html lang="ja">
-<head>
-  <meta charset="utf-8">
-  <title>商品一覧</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto; margin: 2rem; }
-    table { border-collapse: collapse; width: 100%; max-width: 980px; }
-    th, td { border: 1px solid #ddd; padding: .6rem; text-align: left; }
-    th { background: #f6f6f6; }
-    .toolbar { margin: 1rem 0; display: flex; gap: .5rem; align-items: center; }
-    .btn { padding: .5rem 1rem; border: 1px solid #ccc; background: #fafafa; cursor: pointer; }
-    .btn--primary { background: #0ea5e9; color: #fff; border-color: #0ea5e9; }
-    .btn--danger  { background: #ef4444; color: #fff; border-color: #ef4444; }
-    .status { color: #16a34a; margin-bottom: 1rem; }
-  </style>
-</head>
-<body>
-  <h1>商品一覧</h1>
+<div class="max-w-7xl mx-auto px-4 py-8">
 
-  @if (session('status'))
-    <p class="status">{{ session('status') }}</p>
-  @endif
+  {{-- フラッシュメッセージ --}}
+@if (session('status'))
+    <div class="mb-4 rounded bg-green-50 border border-green-200 text-green-800 px-4 py-2">
+        {{ session('status') }}
+    </div>
+@endif
 
-  <form method="get" class="toolbar" action="{{ route('products.index') }}">
-    <input type="text" name="q" value="{{ $q }}" placeholder="検索キーワード">
-    <select name="maker">
-      <option value="">メーカーを選択</option>
-      @foreach($makers as $m)
-        <option value="{{ $m }}" @selected($maker === $m)>{{ $m }}</option>
-      @endforeach
+<style>
+  .title-row{ display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; }
+</style>
+
+<x-app-layout>
+      <x-slot name="header">
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-3xl font-bold">商品一覧</h1>
+        </div>
+      </x-slot>  
+
+  <form method="GET" action="{{ route('products.index') }}" class="flex gap-4">
+    <input type="text" name="name" value="{{ request('name') }}" placeholder="商品名" class="border rounded px-3 py-2 w-1/3">
+    <select name="company_id" class="border rounded px-3 py-2 w-1/3">
+        <option value="">メーカー名（すべて）</option>
+        @foreach($companies as $company)
+            <option value="{{ $company->id }}" @selected(request('company_id') == $company->id)>
+                {{ $company->company_name }}
+            </option>
+        @endforeach
     </select>
-    <button class="btn" type="submit">検索</button>
+    <button 
+    type="submit" 
+    class="bg-white text-black border border-gray-400 rounded px-4 py-2 hover:bg-gray-100 hover:border-gray-600 transition">
+    検索
+    </button>
 
-    <a class="btn btn--primary" href="{{ route('products.create') }}">新規登録</a>
+    <a href="{{ route('products.create') }}"
+    class="inline-flex items-center justify-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-md shadow transition-colors duration-200">
+    新規登録
+    </a>
   </form>
 
-  <form method="POST" action="{{ route('logout') }}" style="position: fixed; bottom: 20px; right: 20px;">
-    @csrf
-    <button type="submit" 
-        style="padding: 10px 20px; background-color: #f87171; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        ログアウト
-    </button>
-　</form>
+  {{-- 一覧テーブル --}}
+  <div class="mt-10">
+  <div class="overflow-x-auto bg-white rounded-lg shadow">
+    <table class="min-w-full text-left">
+      <thead class="border-b bg-slate-50">
+        <tr class="text-sm text-slate-600">
+          <th class="px-5 py-3 w-16">No.</th>
+          <th class="px-5 py-3 w-28">商品画像</th>
+          <th class="px-5 py-3">商品名</th>
+          <th class="px-5 py-3 w-28">価格</th>
+          <th class="px-5 py-3 w-24">在庫数</th>
+          <th class="px-5 py-3 w-40">メーカー名</th>
+          <th class="px-5 py-3 w-40">操作</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y">
+        @forelse ($products as $p)
+          <tr class="align-middle">
+            {{-- id（固定表示） --}}
+            <td class="px-5 py-4 text-slate-700">{{ $loop->iteration }}</td>
 
+            {{-- 商品画像（固定表示） --}}
+            <td class="px-5 py-4">
+              @if($p->img_path)
+                <img src="{{ asset('storage/'.$p->img_path) }}"
+                     alt="image"
+                     class="h-16 w-16 object-cover rounded border" />
+              @else
+                <div class="h-16 w-16 grid place-items-center rounded border text-xs text-slate-400">
+                  no image
+                </div>
+              @endif
+            </td>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>商品名</th>
-        <th>メーカー</th>
-        <th>価格</th>
-        <th>在庫</th>
-        <th>更新日</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody>
-    @forelse ($products as $p)
-      <tr>
-        <td>{{ $p->id }}</td>
-        <td>{{ $p->name }}</td>
-        <td>{{ $p->maker }}</td>
-        <td>{{ number_format($p->price) }}</td>
-        <td>{{ $p->stock }}</td>
-        <td>{{ $p->updated_at?->format('Y-m-d H:i') }}</td>
-        <td>
-          <a class="btn" href="{{ route('products.show', $p) }}">詳細</a>
-          <a class="btn" href="{{ route('products.edit', $p) }}">編集</a>
-          <form action="{{ route('products.destroy', $p) }}" method="post" style="display:inline-block" onsubmit="return confirm('削除しますか？');">
+            {{-- 商品名（固定表示） --}}
+            <td class="px-5 py-4 text-slate-900">{{ $p->product_name }}</td>
+
+            {{-- 価格（固定表示） --}}
+            <td class="px-5 py-4 tabular-nums">¥{{ number_format($p->price) }}</td>
+
+            {{-- 在庫数（固定表示） --}}
+            <td class="px-5 py-4 tabular-nums">{{ $p->stock }}</td>
+
+            {{-- メーカー名（固定表示） --}}
+            <td class="px-5 py-4 text-slate-700">
+              {{ optional($p->company)->company_name ?? '—' }}
+            </td>
+
+            {{-- 操作：詳細ボタン／削除ボタン --}}
+            <td class="px-5 py-3">
+            <div class="flex gap-2">
+
+            {{-- 詳細（青） --}}
+            <a href="{{ route('products.show',  ['product' => $p->id]) }}"
+            class="inline-flex items-center justify-center w-24 h-10 rounded-xl text-white bg-blue-500 hover:bg-blue-600 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600">
+            詳細
+            </a>
+
+           {{-- 削除（赤） --}}
+           <form action="{{ route('products.destroy', ['product' => $p->id]) }}" method="POST"
+            onsubmit="return confirm('この商品を削除してよろしいですか？');" class="inline-block">
             @csrf
             @method('DELETE')
-            <button class="btn btn--danger" type="submit">削除</button>
+            <button type="submit"
+            class="inline-flex items-center justify-center w-24 h-10 rounded-xl text-white bg-red-500 hover:bg-red-600 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
+            削除
+            </button>
           </form>
-        </td>
-      </tr>
-    @empty
-      <tr><td colspan="7">商品がまだ登録されていません。</td></tr>
-    @endforelse
-    </tbody>
-  </table>
+          </div>
+          </td>
+          </tr>
+            @empty
+          <tr>
+            <td class="px-5 py-10 text-center text-slate-500" colspan="7">
+              該当する商品がありません
+            </td>
+          </tr>
+        @endforelse
+      </tbody>
+    </table>
+  </div>
 
-  <div style="margin-top:1rem">
+  {{-- ページネーション（クエリ維持） --}}
+  <div class="mt-6">
     {{ $products->links() }}
   </div>
-</body>
-</html>
+</div>
+</x-app-layout>
+</div>

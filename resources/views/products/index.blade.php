@@ -56,14 +56,14 @@
         </tr>
       </thead>
       <tbody class="divide-y">
-        @forelse ($products as $p)
+        @forelse ($products as $product)
           <tr class="align-middle">
             {{-- id（固定表示） --}}
             <td class="px-5 py-4 text-slate-700">{{ $loop->iteration }}</td>
 
             {{-- 商品画像（固定表示） --}}
             <td class="px-5 py-4">
-              @if($p->img_path)
+              @if($product->img_path)
                 <img src="{{ asset('storage/'.$p->img_path) }}"
                      alt="image"
                      class="h-16 w-16 object-cover rounded border" />
@@ -75,38 +75,43 @@
             </td>
 
             {{-- 商品名（固定表示） --}}
-            <td class="px-5 py-4 text-slate-900">{{ $p->product_name }}</td>
+            <td class="px-5 py-4 text-slate-900">{{ $product->product_name }}</td>
 
             {{-- 価格（固定表示） --}}
-            <td class="px-5 py-4 tabular-nums">¥{{ number_format($p->price) }}</td>
+            <td class="px-5 py-4 tabular-nums">¥{{ number_format($product->price) }}</td>
 
             {{-- 在庫数（固定表示） --}}
-            <td class="px-5 py-4 tabular-nums">{{ $p->stock }}</td>
+            <td class="px-5 py-4 tabular-nums">{{ $product->stock }}</td>
 
             {{-- メーカー名（固定表示） --}}
             <td class="px-5 py-4 text-slate-700">
-              {{ optional($p->company)->company_name ?? '—' }}
+              {{ optional($product->company)->company_name ?? '—' }}
             </td>
 
             {{-- 操作：詳細ボタン／削除ボタン --}}
-            <td class="px-5 py-3">
-            <div class="flex gap-2">
+            <td class="px-6 py-4">
+              <div class="flex items-center gap-3">
 
             {{-- 詳細（青） --}}
-            <a href="{{ route('products.show',  ['product' => $p->id]) }}"
-            class="inline-flex items-center justify-center w-24 h-10 rounded-xl text-white bg-blue-500 hover:bg-blue-600 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600">
-            詳細
+            <a href="{{ route('products.show', $product->id) }}"
+            class="inline-flex items-center justify-center
+              w-24 h-10 rounded-md
+              bg-blue-500 text-white hover:bg-blue-600
+              font-semibold leading-none">
+              詳細
             </a>
 
            {{-- 削除（赤） --}}
-           <form action="{{ route('products.destroy', ['product' => $p->id]) }}" method="POST"
-            onsubmit="return confirm('この商品を削除してよろしいですか？');" class="inline-block">
-            @csrf
-            @method('DELETE')
-            <button type="submit"
-            class="inline-flex items-center justify-center w-24 h-10 rounded-xl text-white bg-red-500 hover:bg-red-600 shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600">
-            削除
-            </button>
+          <form action="{{ route('products.destroy', $product->id) }}" method="POST" class="m-0" onsubmit="return confirm('本当に削除しますか？');">
+           @csrf
+           @method('DELETE')
+          <button type="submit"
+            class="inline-flex items-center justify-center
+               w-24 h-10 rounded-md
+               bg-red-500 text-white hover:bg-red-600
+               font-semibold leading-none">
+               削除
+          </button>
           </form>
           </div>
           </td>

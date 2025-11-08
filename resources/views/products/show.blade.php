@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            商品詳細（商品情報ID： {{ $number }}）
+          商品詳細（商品情報ID：{{ $displayId }}）
         </h2>
     </x-slot>
 
@@ -57,7 +57,7 @@
                             <div>
                                 <div class="text-sm text-gray-500">商品情報ID</div>
                                 <div class="mt-1 text-lg font-semibold text-gray-900">
-                                    {{ $number }}
+                                    {{ $displayId }}
                                 </div>
                             </div>
                         </div>

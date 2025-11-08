@@ -1,48 +1,59 @@
-@csrf
+<div class="grid grid-cols-12 gap-6">
 
-<div>
-  <label>商品名 <span style="color:#ef4444">＊</span></label><br>
-  <input type="text" name="name" value="{{ old('name', $product->name ?? '') }}">
-  @error('name')<div style="color:#ef4444">{{ $message }}</div>@enderror
-</div>
+{{-- 商品名 --}}
+  <div class="col-span-12 md:col-span-4">
+    <label class="block text-sm font-medium">商品名 <span class="text-red-500">*</span></label>
+    <input type="text" name="product_name" value="{{ old('product_name') }}"
+           class="mt-1 block w-full rounded border p-2" />
+    @error('product_name')
+      <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+    @enderror
+  </div>
 
-<div>
-  <label>メーカー <span style="color:#ef4444">＊</span></label><br>
-  <input type="text" name="maker" value="{{ old('maker', $product->maker ?? '') }}">
-  @error('maker')<div style="color:#ef4444">{{ $message }}</div>@enderror
-</div>
+  {{-- メーカー --}}
+  <div class="col-span-12 md:col-span-4">
+    <label class="block text-sm font-medium">メーカー <span class="text-red-500">*</span></label>
+    <select name="company_id" class="mt-1 block w-full rounded border p-2">
+      <option value="" disabled {{ old('company_id')==='' ? 'selected' : '' }}>選択してください</option>
+      @foreach($companies as $c)
+        <option value="{{ $c->id }}" {{ old('company_id') == $c->id ? 'selected' : '' }}>
+          {{ $c->company_name }}
+        </option>
+      @endforeach
+    </select>
+    @error('company_id')
+      <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
+    @enderror
+  </div>
 
-<div>
-  <label>価格 <span style="color:#ef4444">＊</span></label><br>
-  <input type="number" name="price" value="{{ old('price', $product->price ?? 0) }}" min="0">
-  @error('price')<div style="color:#ef4444">{{ $message }}</div>@enderror
-</div>
+  {{-- 価格 --}}
+  <div class="col-span-12 md:col-span-2">
+    <label class="block text-sm font-medium">価格 <span class="text-red-500">*</span></label>
+    <input type="number" name="price" min="0" value="{{ old('price') }}"
+           class="mt-1 block w-full rounded border p-2" />
+    @error('price') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+  </div>
 
-<div>
-  <label>在庫 <span style="color:#ef4444">＊</span></label><br>
-  <input type="number" name="stock" value="{{ old('stock', $product->stock ?? 0) }}" min="0">
-  @error('stock')<div style="color:#ef4444">{{ $message }}</div>@enderror
-</div>
+  {{-- 在庫数 --}}
+  <div class="col-span-12 md:col-span-2">
+    <label class="block text-sm font-medium">在庫数 <span class="text-red-500">*</span></label>
+    <input type="number" name="stock" min="0" value="{{ old('stock') }}"
+           class="mt-1 block w-full rounded border p-2" />
+    @error('stock') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+  </div>
 
-<div class="mt-4">
-  <label class="block text-sm font-medium text-gray-700">商品画像</label>
-  <input type="file" name="image" accept="image/*"
-        class="mt-1 block w-full border rounded p-2">
-  @error('image')
-    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-  @enderror
+  {{-- コメント --}}
+  <div class="col-span-12">
+    <label class="block text-sm font-medium">コメント</label>
+    <textarea name="comment" rows="4"
+              class="mt-1 block w-full rounded border p-2">{{ old('comment') }}</textarea>
+    @error('comment') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+  </div>
 
-        {{-- 編集時は現在画像のプレビュー --}}
-        @isset($product)
-            @if($product->image_path)
-                <img src="{{ asset('storage/'.$product->image_path) }}"
-                     alt="商品画像" class="mt-2 h-24 rounded object-cover">
-            @endif
-        @endisset
-</div>
-
-<div>
-  <label>コメント</label><br>
-  <textarea name="comment" rows="4">{{ old('comment', $product->comment ?? '') }}</textarea>
-  @error('comment')<div style="color:#ef4444">{{ $message }}</div>@enderror
+  {{-- 画像 --}}
+  <div class="col-span-12 md:col-span-6">
+    <label class="block text-sm font-medium">商品画像</label>
+    <input type="file" name="img_path" accept="image/*" class="mt-1 block w-full" />
+    @error('img_path') <p class="text-sm text-red-600 mt-1">{{ $message }}</p> @enderror
+  </div>
 </div>

@@ -3,17 +3,6 @@
     <h1 class="text-2xl font-semibold mb-6">商品情報編集（商品情報ID：{{ $displayId }}）</h1>
   </x-slot>
 
-  {{-- バリデーションエラー --}}
-  @if ($errors->any())
-    <div class="mb-6 rounded-md bg-red-50 p-4 text-red-700">
-      <ul class="list-disc list-inside">
-        @foreach ($errors->all() as $error)
-          <li>{{ $error }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
-
   <div class="bg-white rounded-lg shadow p-6">
     <form action="{{ route('products.update', ['product' => $product->id]) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
       @csrf
